@@ -2,7 +2,7 @@
 /*
 Plugin Name: Breadstack Enfold Integration
 Description: Enfold theme integration enhancements for Breadstack WooCommerce.
-Version: 1.0.3
+Version: 1.0.3.5
 Author: StratLab Marketing
 Author URI: https://strategylab.ca/
 Text Domain: breadstack-enfold
@@ -39,10 +39,19 @@ add_action('plugins_loaded', function() {
 });
 
 // Enqueue general JS and CSS files
-function bs_enfold_enqueue_scripts() {
-  wp_enqueue_style('bs-enfold-frontend-styles', plugin_dir_url(__FILE__) . ' breadstack-enfold.css');
-  wp_enqueue_script('bs-enfold-frontend-script', plugin_dir_url(__FILE__) . 'breadstack-enfold.js', array('jquery'), null, true);
+function bs_enfold_enqueue_scripts($hook) {
+	if ($hook == 'breadstack_enfold_settings_page') {
+	        // Admin-specific styles and scripts
+	        wp_enqueue_media();
+	        wp_enqueue_style('bs-enfold-admin-styles', plugin_dir_url(__FILE__) . 'admin-ui.css');
+		wp_enqueue_script('bs-enfold-admin-script', plugin_dir_url(__FILE__) . 'admin-ui.js', array('jquery'), null, true);
+	} else {
+		// Frontend-specific styles and scripts
+		wp_enqueue_style('bs-enfold-frontend-styles', plugin_dir_url(__FILE__) . ' breadstack-enfold.css');
+		wp_enqueue_script('bs-enfold-frontend-script', plugin_dir_url(__FILE__) . 'breadstack-enfold.js', array('jquery'), null, true);
+	}
 }
+add_action('admin_enqueue_scripts', 'bs_enfold_enqueue_scripts');
 add_action('wp_enqueue_scripts', 'bs_enfold_enqueue_scripts');
 
 // Create Admin Settings Page
